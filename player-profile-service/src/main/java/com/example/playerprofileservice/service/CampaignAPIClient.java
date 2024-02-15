@@ -16,6 +16,6 @@ public interface CampaignAPIClient {
     @GetMapping("/campaigns/{name}")
     CampaignDto getCampaignByName(@PathVariable String name);
 
-    @GetMapping("/all")
+    @GetMapping("/campaigns/all")
     List<CampaignDto> findAllCampaigns();
 }

@@ -11,6 +11,6 @@ public interface PlayerProfileService {
 
     PlayerProfileDto savePlayer(PlayerProfileDto playerProfileDto);
 
-//    PlayerProfileDto findPlayerByUuid(Long uuid);
-    APIResponseDto findPlayerByUuid(UUID uuid);
+    //    PlayerProfileDto findPlayerByUuid(Long uuid);
+    PlayerProfileDto findPlayerByUuid(UUID uuid);
 }

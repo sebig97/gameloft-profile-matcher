@@ -32,7 +32,7 @@ public class PlayerProfileController {
 
     @GetMapping("/{id}")
     public ResponseEntity<?> getPlayerProfileById(@PathVariable UUID id) {
-        APIResponseDto apiResponseDto = playerProfileService.findPlayerByUuid(id);
-        return new ResponseEntity<>(apiResponseDto, HttpStatus.OK);
+        PlayerProfileDto playerProfileDto = playerProfileService.findPlayerByUuid(id);
+        return new ResponseEntity<>(playerProfileDto, HttpStatus.OK);
     }
 }

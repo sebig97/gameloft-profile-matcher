@@ -11,6 +11,7 @@ import com.example.playerprofileservice.entity.PlayerProfile;
 import com.example.playerprofileservice.repository.PlayerProfileRepository;
 import com.example.playerprofileservice.service.CampaignAPIClient;
 import com.example.playerprofileservice.service.PlayerProfileService;
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
@@ -27,6 +28,8 @@ public class PlayerProfileServiceImpl implements PlayerProfileService {
     private final PlayerProfileRepository playerProfileRepository;
 
     private final CampaignAPIClient campaignAPIClient;
+
+    private final ProfileMatcherService profileMatcherService;
 
     private final ModelMapper modelMapper;
 
@@ -99,25 +102,50 @@ public class PlayerProfileServiceImpl implements PlayerProfileService {
     }
 
     @Override
-    public APIResponseDto findPlayerByUuid(UUID id) {
+    public PlayerProfileDto findPlayerByUuid(UUID id) {
         Optional<PlayerProfile> optionalPlayerProfile = playerProfileRepository.findById(id);
 
         if (optionalPlayerProfile.isPresent()) {
             PlayerProfileDto playerProfileDto = modelMapper.map(optionalPlayerProfile.get(), PlayerProfileDto.class);
-            CampaignDto campaignDto = campaignAPIClient.getCampaignByName("sebi113");
-//            return playerProfileDto;
 
-            APIResponseDto apiResponseDto = APIResponseDto.builder()
-                    .playerProfileDto(playerProfileDto)
-                    .campaignDto(campaignDto)
-                    .build();
+            List<CampaignDto> allCampaignsDto = campaignAPIClient.findAllCampaigns();
 
-            return apiResponseDto;
+            // Check if player profile matches any of the current campaigns
+            for (CampaignDto campaignDto : allCampaignsDto) {
+                if (profileMatcherService.isProfileMatchingCampaign(playerProfileDto, campaignDto)) {
+                    // Perform actions when profile matches campaign
+                    // For example, update player profile with active campaign
+                    updatePlayerProfileWithActiveCampaign(playerProfileDto, campaignDto);
+                }
+            }
+
+            Optional<PlayerProfile> updatedOptionalPlayerProfile = playerProfileRepository.findById(id);
+            PlayerProfileDto updatedPlayerProfile = modelMapper.map(updatedOptionalPlayerProfile.get(), PlayerProfileDto.class);
+
+            return updatedPlayerProfile;
         } else {
             {
                 throw new RuntimeException("Player with id + " + id + " is not registered");
             }
         }
 
+    }
+
+    private void updatePlayerProfileWithActiveCampaign(PlayerProfileDto playerProfileDto, CampaignDto campaignDto) {
+        // Check if the campaign is not already in the player's active campaigns list
+        if (!playerProfileDto.getActiveCampaigns().contains(campaignDto.getGame())) {
+            // Add the campaign name to the player's active campaigns
+            playerProfileDto.getActiveCampaigns().add(campaignDto.getName());
+            // Update the player profile in the database
+            updatePlayerProfile(playerProfileDto);
+        }
+    }
+
+    @Transactional
+    public void updatePlayerProfile(PlayerProfileDto playerProfileDto) {
+
+        PlayerProfile playerProfileJpa = modelMapper.map(playerProfileDto, PlayerProfile.class);
+        // Update the player profile in the database
+        playerProfileRepository.save(playerProfileJpa);
     }
 }
