@@ -7,5 +7,5 @@ public interface CampaignService {
 
     CampaignDto saveCampaign(CampaignDto campaignDto);
 
-    Campaign findCampaignByName(String name);
+    CampaignDto findCampaignByName(String name);
 }

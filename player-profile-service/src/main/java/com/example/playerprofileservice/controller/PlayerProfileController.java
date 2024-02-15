@@ -1,6 +1,7 @@
 package com.example.playerprofileservice.controller;
 
 
+import com.example.playerprofileservice.dto.APIResponseDto;
 import com.example.playerprofileservice.dto.PlayerProfileDto;
 import com.example.playerprofileservice.service.PlayerProfileService;
 import lombok.AllArgsConstructor;
@@ -31,7 +32,7 @@ public class PlayerProfileController {
 
     @GetMapping("/{id}")
     public ResponseEntity<?> getPlayerProfileById(@PathVariable UUID id) {
-        PlayerProfileDto playerProfileDto = playerProfileService.findPlayerByUuid(id);
-        return new ResponseEntity<>(playerProfileDto, HttpStatus.OK);
+        APIResponseDto apiResponseDto = playerProfileService.findPlayerByUuid(id);
+        return new ResponseEntity<>(apiResponseDto, HttpStatus.OK);
     }
 }

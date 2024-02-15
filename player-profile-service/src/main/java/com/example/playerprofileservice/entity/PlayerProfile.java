@@ -56,7 +56,9 @@ public class PlayerProfile {
     private List<String> activeCampaigns;
 //    In this case, Device is marked with @Embeddable, and it's used within the PlayerProfile entity as a collection using the @ElementCollection annotation. This is appropriate when Device is considered as a component or value type that is embedded directly into the entity.
     @Column(name = "devices")
-    @OneToMany(mappedBy = "playerProfile", cascade = CascadeType.ALL)
+//    @OneToMany(mappedBy = "playerProfile", cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.ALL)
+    @JoinColumn(name = "fk_player_id", referencedColumnName = "player_id")
     private List<Device> devices;
     @Column(name = "level", nullable = false)
     private int level;
@@ -89,13 +91,12 @@ public class PlayerProfile {
     @ElementCollection
     private Map<String, Integer> inventory;
 
-
-    @PrimaryKeyJoinColumn(name = "clan_id")
-    @OneToOne(mappedBy = "playerProfile", cascade = CascadeType.ALL)
-    private Clan clan;
-//    @OneToOne(mappedBy = "playerProfile")
+//    merge
 //    @PrimaryKeyJoinColumn(name = "clan_id")
-
+//    @OneToOne(mappedBy = "playerProfile", cascade = CascadeType.ALL)
+    @JoinColumn(name = "clan_id")
+    @OneToOne(cascade = CascadeType.ALL)
+    private Clan clan;
 
 
     @Column(name = "customField", nullable = false)

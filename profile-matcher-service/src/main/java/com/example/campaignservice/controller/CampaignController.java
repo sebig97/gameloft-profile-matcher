@@ -19,12 +19,12 @@ public class CampaignController {
     @PostMapping("/save")
     public ResponseEntity<?> saveCampaign(@RequestBody CampaignDto campaignDto) {
         CampaignDto savedCampaignDto = campaignService.saveCampaign(campaignDto);
-        return new ResponseEntity<>(campaignDto, HttpStatus.CREATED);
+        return new ResponseEntity<>(savedCampaignDto, HttpStatus.CREATED);
     }
 
     @GetMapping("/{name}")
     public ResponseEntity<?> getCampaignByName(@PathVariable String name) {
-        Campaign campaign = campaignService.findCampaignByName(name);
-        return new ResponseEntity<>(campaign, HttpStatus.OK);
+        CampaignDto campaignDto = campaignService.findCampaignByName(name);
+        return new ResponseEntity<>(campaignDto, HttpStatus.OK);
     }
 }

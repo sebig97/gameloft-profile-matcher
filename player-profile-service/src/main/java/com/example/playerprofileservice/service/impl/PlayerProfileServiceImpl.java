@@ -4,11 +4,12 @@ package com.example.playerprofileservice.service.impl;
 
 import com.example.playerprofileservice.common.Clan;
 import com.example.playerprofileservice.common.Device;
-import com.example.playerprofileservice.dto.ClanDto;
+import com.example.playerprofileservice.dto.APIResponseDto;
+import com.example.playerprofileservice.dto.CampaignDto;
 import com.example.playerprofileservice.dto.PlayerProfileDto;
 import com.example.playerprofileservice.entity.PlayerProfile;
-import com.example.playerprofileservice.repository.ClanRepository;
 import com.example.playerprofileservice.repository.PlayerProfileRepository;
+import com.example.playerprofileservice.service.CampaignAPIClient;
 import com.example.playerprofileservice.service.PlayerProfileService;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -25,7 +26,7 @@ public class PlayerProfileServiceImpl implements PlayerProfileService {
 
     private final PlayerProfileRepository playerProfileRepository;
 
-    private final ClanRepository clanRepository;
+    private final CampaignAPIClient campaignAPIClient;
 
     private final ModelMapper modelMapper;
 
@@ -82,7 +83,7 @@ public class PlayerProfileServiceImpl implements PlayerProfileService {
                             .model(deviceEntity.getModel())
                             .carrier(deviceEntity.getCarrier())
                             .firmware(deviceEntity.getFirmware())
-                            .playerProfile(playerJpa)
+//                            .playerProfile(playerJpa)
                             .build())
                     .collect(Collectors.toList());
 
@@ -98,12 +99,20 @@ public class PlayerProfileServiceImpl implements PlayerProfileService {
     }
 
     @Override
-    public PlayerProfileDto findPlayerByUuid(UUID id) {
+    public APIResponseDto findPlayerByUuid(UUID id) {
         Optional<PlayerProfile> optionalPlayerProfile = playerProfileRepository.findById(id);
 
         if (optionalPlayerProfile.isPresent()) {
             PlayerProfileDto playerProfileDto = modelMapper.map(optionalPlayerProfile.get(), PlayerProfileDto.class);
-            return playerProfileDto;
+            CampaignDto campaignDto = campaignAPIClient.getCampaignByName("sebi113");
+//            return playerProfileDto;
+
+            APIResponseDto apiResponseDto = APIResponseDto.builder()
+                    .playerProfileDto(playerProfileDto)
+                    .campaignDto(campaignDto)
+                    .build();
+
+            return apiResponseDto;
         } else {
             {
                 throw new RuntimeException("Player with id + " + id + " is not registered");

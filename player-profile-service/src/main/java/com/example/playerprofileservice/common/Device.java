@@ -21,7 +21,7 @@ public class Device {
     private String carrier;
     private String firmware;
 
-    @ManyToOne
-    @JsonIgnore
-    private PlayerProfile playerProfile;
+//    @ManyToOne
+//    @JsonIgnore
+//    private PlayerProfile playerProfile;
 }

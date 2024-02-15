@@ -21,7 +21,7 @@ public class Clan {
     private Long clan_id;
     private String clan_name;
 
-    @OneToOne
+    @OneToOne(mappedBy = "clan")
     @JsonIgnore
     PlayerProfile playerProfile;
 }

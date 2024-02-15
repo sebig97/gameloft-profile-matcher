@@ -56,10 +56,18 @@ public class CampaignServiceImpl implements CampaignService {
     }
 
     @Override
-    public Campaign findCampaignByName(String name) {
-        Campaign campaign = campaignRepository.findCampaignByName(name)
-                .orElseThrow(() -> new RuntimeException("Campaign with name " + name + " doesn't exists in database!"));
+    public CampaignDto findCampaignByName(String name) {
+//        Optional<Campaign> campaign = campaignRepository.findCampaignByName(name)
+//                .orElseThrow(() -> new RuntimeException("Campaign with name " + name + " doesn't exists in database!"));
 
-        return campaign;
+        Optional<Campaign> optionalCampaign = campaignRepository.findCampaignByName(name);
+
+        if (optionalCampaign.isPresent()) {
+            CampaignDto campaignDto = modelMapper.map(optionalCampaign.get(), CampaignDto.class);
+            return campaignDto;
+        } else {
+            throw new RuntimeException("Campaign with name " + name + " doesn't exists in database!");
+        }
+
     }
 }
