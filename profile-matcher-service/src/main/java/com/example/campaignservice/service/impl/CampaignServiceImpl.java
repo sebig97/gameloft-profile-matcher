@@ -2,6 +2,7 @@ package com.example.campaignservice.service.impl;
 
 import com.example.campaignservice.common.DoesNotHave;
 import com.example.campaignservice.common.Has;
+import com.example.campaignservice.common.Level;
 import com.example.campaignservice.dto.CampaignDto;
 import com.example.campaignservice.entity.Campaign;
 import com.example.campaignservice.repository.CampaignRepository;
@@ -11,7 +12,11 @@ import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import javax.swing.text.html.Option;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -50,6 +55,16 @@ public class CampaignServiceImpl implements CampaignService {
             campaignJpa.getMatchers().setHas(has);
         }
 
+        if (campaignDto.getMatchers().getLevel() != null) {
+            Level level = Level.builder()
+                    .min(campaignJpa.getMatchers().getLevel().getMin())
+                    .max(campaignJpa.getMatchers().getLevel().getMax())
+                    .campaign(campaignJpa)
+                    .build();
+
+            campaignJpa.getMatchers().setLevel(level);
+        }
+
         campaignRepository.save(campaignJpa);
 
         return modelMapper.map(campaignJpa, CampaignDto.class);
@@ -69,5 +84,20 @@ public class CampaignServiceImpl implements CampaignService {
             throw new RuntimeException("Campaign with name " + name + " doesn't exists in database!");
         }
 
+    }
+
+    @Override
+    public List<CampaignDto> findAllCampaigns() {
+        List<Campaign> allCampaigns = campaignRepository.findAll();
+        Function<Campaign, CampaignDto> JpaToDto = campaign -> modelMapper.map(campaign, CampaignDto.class);
+
+        if (allCampaigns.size() > 0) {
+            List<CampaignDto> allCampaignsDto = allCampaigns.stream()
+                    .map(JpaToDto).toList();
+
+            return allCampaignsDto;
+        }
+
+        return new ArrayList<>();
     }
 }

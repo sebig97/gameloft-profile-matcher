@@ -12,11 +12,15 @@ import java.util.Map;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Matcherss {
-    @ElementCollection
-    @CollectionTable(name = "level_matchers", joinColumns = @JoinColumn(name = "campaign_id"))
-    @MapKeyColumn(name = "level_key")
-    @Column(name = "level_value")
-    private Map<String, Integer> levelMatchers;
+//    @ElementCollection
+//    @CollectionTable(name = "level_matchers", joinColumns = @JoinColumn(name = "campaign_id"))
+//    @MapKeyColumn(name = "level_key")
+//    @Column(name = "level_value")
+//    private Map<String, Integer> levelMatchers;
+
+    @PrimaryKeyJoinColumn(name = "LevelId")
+    @OneToOne(mappedBy = "campaign", cascade = CascadeType.ALL)
+    private Level level;
 
     @PrimaryKeyJoinColumn(name = "DoesNotHaveId")
     @OneToOne(mappedBy = "campaign", cascade = CascadeType.ALL)
