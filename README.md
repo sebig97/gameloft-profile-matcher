@@ -27,7 +27,7 @@ The project consists of the following components for each service:
   - DTO (Data Transfer Object): Defines objects exchanged between service layers and external clients.
   - Entity: Represents data stored in the database.
   - Exception Handler Class: Handles exceptions thrown within the service and returns appropriate responses.
-  - Annotations: Includes various annotations such as `@Service`, `@Controller`, `@Repository`, etc.
+  - Annotations: Includes various stereotypes such as `@Service`, `@Controller`, `@Repository`, etc.
 
 - **Campaign Service**: (Similar structure as Player Profile Service)
 
