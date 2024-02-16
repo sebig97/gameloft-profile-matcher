@@ -5,18 +5,18 @@ import com.example.campaignservice.common.Has;
 import com.example.campaignservice.common.Level;
 import com.example.campaignservice.dto.CampaignDto;
 import com.example.campaignservice.entity.Campaign;
+import com.example.campaignservice.exception.ResourceAlreadyExistsException;
+import com.example.campaignservice.exception.ResourceNotFoundException;
 import com.example.campaignservice.repository.CampaignRepository;
 import com.example.campaignservice.service.CampaignService;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
-import javax.swing.text.html.Option;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -27,11 +27,11 @@ public class CampaignServiceImpl implements CampaignService {
     private final ModelMapper modelMapper;
 
     @Override
-    public CampaignDto saveCampaign(CampaignDto campaignDto) {
+    public CampaignDto saveCampaign(CampaignDto campaignDto) throws ResourceAlreadyExistsException {
         Optional<Campaign> optionalCampaign = campaignRepository.findCampaignByName(campaignDto.getName());
 
         if (optionalCampaign.isPresent()) {
-            throw new RuntimeException("Campaign with name " + campaignDto.getName() + " already exists!");
+            throw new ResourceAlreadyExistsException("Campaign with name " + campaignDto.getName() + " already exists!");
         }
 
         Campaign campaignJpa = modelMapper.map(campaignDto, Campaign.class);
@@ -71,17 +71,14 @@ public class CampaignServiceImpl implements CampaignService {
     }
 
     @Override
-    public CampaignDto findCampaignByName(String name) {
-//        Optional<Campaign> campaign = campaignRepository.findCampaignByName(name)
-//                .orElseThrow(() -> new RuntimeException("Campaign with name " + name + " doesn't exists in database!"));
-
+    public CampaignDto findCampaignByName(String name) throws ResourceNotFoundException {
         Optional<Campaign> optionalCampaign = campaignRepository.findCampaignByName(name);
 
         if (optionalCampaign.isPresent()) {
             CampaignDto campaignDto = modelMapper.map(optionalCampaign.get(), CampaignDto.class);
             return campaignDto;
         } else {
-            throw new RuntimeException("Campaign with name " + name + " doesn't exists in database!");
+            throw new ResourceNotFoundException("Campaign with name " + name + " doesn't exists in database!");
         }
 
     }

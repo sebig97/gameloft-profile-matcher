@@ -1,23 +1,18 @@
 package com.example.campaignservice.common;
 
-import jakarta.persistence.*;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Embeddable;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.PrimaryKeyJoinColumn;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import java.util.Map;
 
 @Embeddable
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 public class Matcherss {
-//    @ElementCollection
-//    @CollectionTable(name = "level_matchers", joinColumns = @JoinColumn(name = "campaign_id"))
-//    @MapKeyColumn(name = "level_key")
-//    @Column(name = "level_value")
-//    private Map<String, Integer> levelMatchers;
-
     @PrimaryKeyJoinColumn(name = "LevelId")
     @OneToOne(mappedBy = "campaign", cascade = CascadeType.ALL)
     private Level level;

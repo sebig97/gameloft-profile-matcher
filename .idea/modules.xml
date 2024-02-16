@@ -2,9 +2,12 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/api-gateway/api-gateway.iml" filepath="$PROJECT_DIR$/api-gateway/api-gateway.iml" />
+      <module fileurl="file://$PROJECT_DIR$/config-server/config-server.iml" filepath="$PROJECT_DIR$/config-server/config-server.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/profile-matcher-microservice-based.iml" filepath="$PROJECT_DIR$/.idea/profile-matcher-microservice-based.iml" />
       <module fileurl="file://$PROJECT_DIR$/profile-matcher-service/profile-matcher-service.iml" filepath="$PROJECT_DIR$/profile-matcher-service/profile-matcher-service.iml" />
       <module fileurl="file://$PROJECT_DIR$/player-profile-service/proiect.iml" filepath="$PROJECT_DIR$/player-profile-service/proiect.iml" />
+      <module fileurl="file://$PROJECT_DIR$/service-registry/service-registry.iml" filepath="$PROJECT_DIR$/service-registry/service-registry.iml" />
     </modules>
   </component>
 </project>

@@ -26,9 +26,6 @@ public class PlayerProfile {
     @Column(name = "player_id", updatable = false, nullable = false)
     private UUID playerId;
 
-//    @Id
-//    @GeneratedValue(strategy = GenerationType.IDENTITY)
-//    private Long playerId;
     @Column(name = "credential", nullable = false)
     private String credential;
     @Column(name = "created", nullable = false)
@@ -76,24 +73,9 @@ public class PlayerProfile {
     @Column(name = "gender", nullable = false)
     private String gender;
 
-//    Inventory and Clan are marked with @Embeddable, and they are used within the PlayerProfile entity with the @Embedded annotation
-//    @Column(name = "inventory", nullable = false)
-//    @Embedded
-
-//    @Embedded
-//    @AttributeOverrides({
-//            @AttributeOverride(name = "cash", column = @Column(name = "inventory_cash")),
-//            @AttributeOverride(name = "coins", column = @Column(name = "inventory_coins")),
-//            @AttributeOverride(name = "items", column = @Column(name = "inventory_items"))
-//    })
-//    private Inventory inventory;
-
     @ElementCollection
     private Map<String, Integer> inventory;
 
-//    merge
-//    @PrimaryKeyJoinColumn(name = "clan_id")
-//    @OneToOne(mappedBy = "playerProfile", cascade = CascadeType.ALL)
     @JoinColumn(name = "clan_id")
     @OneToOne(cascade = CascadeType.ALL)
     private Clan clan;

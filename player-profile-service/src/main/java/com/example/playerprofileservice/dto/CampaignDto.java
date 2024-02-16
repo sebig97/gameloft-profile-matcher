@@ -15,9 +15,6 @@ public class CampaignDto {
     private String game;
     private String name;
     private double priority;
-//    private Map<String, Integer> levelMatchers;
-//    private DoesNotHave doesNotHave;
-//    private Has has;
     private Matcherss matchers;
     private ZonedDateTime startDate;
     private ZonedDateTime endDate;
