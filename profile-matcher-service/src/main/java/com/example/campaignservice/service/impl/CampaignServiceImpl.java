@@ -24,21 +24,23 @@ import java.util.function.Function;
 @AllArgsConstructor
 public class CampaignServiceImpl implements CampaignService {
     private static final Logger LOGGER = LoggerFactory.getLogger(CampaignServiceImpl.class);
-
     private final CampaignRepository campaignRepository;
-
     private final ModelMapper modelMapper;
 
+    // Method to save a new campaign
     @Override
     public CampaignDto saveCampaign(CampaignDto campaignDto) throws ResourceAlreadyExistsException {
+        // Check if a campaign with the same name already exists
         Optional<Campaign> optionalCampaign = campaignRepository.findCampaignByName(campaignDto.getName());
 
         if (optionalCampaign.isPresent()) {
             throw new ResourceAlreadyExistsException("Campaign with name " + campaignDto.getName() + " already exists!");
         }
 
+        // Map CampaignDto to Campaign entity
         Campaign campaignJpa = modelMapper.map(campaignDto, Campaign.class);
 
+        // Map nested objects (Matchers) if they are present in CampaignDto
         if (campaignDto.getMatchers().getDoesNotHave() != null) {
             DoesNotHave doesNotHave = DoesNotHave.builder()
                     .items(campaignJpa.getMatchers().getDoesNotHave().getItems())
@@ -68,8 +70,10 @@ public class CampaignServiceImpl implements CampaignService {
             campaignJpa.getMatchers().setLevel(level);
         }
 
+        // Save the campaign in the database
         campaignRepository.save(campaignJpa);
 
+        // Map the saved Campaign entity back to CampaignDto and return it
         return modelMapper.map(campaignJpa, CampaignDto.class);
     }
 
@@ -93,15 +97,19 @@ public class CampaignServiceImpl implements CampaignService {
         LOGGER.info("inside findAllCampaigns method");
 
         List<Campaign> allCampaigns = campaignRepository.findAll();
+
+        // Map each Campaign entity to CampaignDto using ModelMapper
         Function<Campaign, CampaignDto> JpaToDto = campaign -> modelMapper.map(campaign, CampaignDto.class);
 
         if (allCampaigns.size() > 0) {
+            // Convert List of Campaign entities to List of CampaignDto
             List<CampaignDto> allCampaignsDto = allCampaigns.stream()
                     .map(JpaToDto).toList();
 
             return allCampaignsDto;
         }
 
+        // Return an empty list if no campaigns are found
         return new ArrayList<>();
     }
 }

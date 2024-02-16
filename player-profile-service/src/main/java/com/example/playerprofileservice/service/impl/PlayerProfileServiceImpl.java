@@ -29,25 +29,25 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class PlayerProfileServiceImpl implements PlayerProfileService {
     private static final Logger LOGGER = LoggerFactory.getLogger(PlayerProfileServiceImpl.class);
-
     private final PlayerProfileRepository playerProfileRepository;
-
     private final CampaignAPIClient campaignAPIClient;
-
     private final ProfileMatcherService profileMatcherService;
-
     private final ModelMapper modelMapper;
 
     @Override
     public PlayerProfileDto savePlayer(PlayerProfileDto playerProfileDto) {
+        // Check if a player with the same credential already exists
         Optional<PlayerProfile> optionalPlayerProfile = playerProfileRepository.findByCredential(playerProfileDto.getCredential());
 
         if (optionalPlayerProfile.isPresent()) {
+            // Throw exception if player with the same credential already exists
             throw new ResourceAlreadyExistsException("Player with credential " + playerProfileDto.getCredential() + " already exists!");
         }
 
+        // Map PlayerProfileDto to PlayerProfile entity
         PlayerProfile playerJpa = modelMapper.map(playerProfileDto, PlayerProfile.class);
 
+        // Map nested objects (Clan and Devices) if they are present in PlayerProfileDto
         if (playerProfileDto.getClan() != null) {
             Clan clan = Clan.builder()
                     .clan_name(playerJpa.getClan().getClan_name())
@@ -71,8 +71,10 @@ public class PlayerProfileServiceImpl implements PlayerProfileService {
             playerJpa.setDevices(devices);
         }
 
+        // Save the player profile in the database
         playerProfileRepository.save(playerJpa);
 
+        // Map the saved PlayerProfile entity back to PlayerProfileDto and return it
         return modelMapper.map(playerJpa, PlayerProfileDto.class);
 
     }
@@ -82,18 +84,19 @@ public class PlayerProfileServiceImpl implements PlayerProfileService {
     public PlayerProfileDto findPlayerByUuid(UUID id) throws ResourceNotFoundException {
         LOGGER.info("inside findPlayerByUuid method");
 
+        // Find the player profile in the database by its UUID
         Optional<PlayerProfile> optionalPlayerProfile = playerProfileRepository.findById(id);
 
         if (optionalPlayerProfile.isPresent()) {
             PlayerProfileDto playerProfileDto = modelMapper.map(optionalPlayerProfile.get(), PlayerProfileDto.class);
 
+            // Retrieve all campaigns from external API
             List<CampaignDto> allCampaignsDto = campaignAPIClient.findAllCampaigns();
 
             // Check if player profile matches any of the current campaigns
             for (CampaignDto campaignDto : allCampaignsDto) {
                 if (profileMatcherService.isProfileMatchingCampaign(playerProfileDto, campaignDto)) {
-                    // Perform actions when profile matches campaign
-                    // For example, update player profile with active campaign
+                    // Update player profile with active campaign
                     updatePlayerProfileWithActiveCampaign(playerProfileDto, campaignDto);
 
                     // Fetch updated player profile after updating
@@ -110,6 +113,7 @@ public class PlayerProfileServiceImpl implements PlayerProfileService {
         }
     }
 
+    // Fallback method to provide default campaigns when the main method fails
     public PlayerProfileDto getDefaultCampaign(UUID id, Exception exception) throws ResourceNotFoundException {
         LOGGER.info("inside getDefaultCampaign method");
 
