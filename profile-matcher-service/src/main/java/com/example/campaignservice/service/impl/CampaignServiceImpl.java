@@ -11,6 +11,8 @@ import com.example.campaignservice.repository.CampaignRepository;
 import com.example.campaignservice.service.CampaignService;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -21,6 +23,7 @@ import java.util.function.Function;
 @Service
 @AllArgsConstructor
 public class CampaignServiceImpl implements CampaignService {
+    private static final Logger LOGGER = LoggerFactory.getLogger(CampaignServiceImpl.class);
 
     private final CampaignRepository campaignRepository;
 
@@ -72,6 +75,8 @@ public class CampaignServiceImpl implements CampaignService {
 
     @Override
     public CampaignDto findCampaignByName(String name) throws ResourceNotFoundException {
+        LOGGER.info("inside findCampaignByName method");
+
         Optional<Campaign> optionalCampaign = campaignRepository.findCampaignByName(name);
 
         if (optionalCampaign.isPresent()) {
@@ -85,6 +90,8 @@ public class CampaignServiceImpl implements CampaignService {
 
     @Override
     public List<CampaignDto> findAllCampaigns() {
+        LOGGER.info("inside findAllCampaigns method");
+
         List<Campaign> allCampaigns = campaignRepository.findAll();
         Function<Campaign, CampaignDto> JpaToDto = campaign -> modelMapper.map(campaign, CampaignDto.class);
 

@@ -15,6 +15,8 @@ import io.github.resilience4j.retry.annotation.Retry;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
@@ -26,6 +28,7 @@ import java.util.stream.Collectors;
 @Service
 @AllArgsConstructor
 public class PlayerProfileServiceImpl implements PlayerProfileService {
+    private static final Logger LOGGER = LoggerFactory.getLogger(PlayerProfileServiceImpl.class);
 
     private final PlayerProfileRepository playerProfileRepository;
 
@@ -77,6 +80,8 @@ public class PlayerProfileServiceImpl implements PlayerProfileService {
     @Override
     @Retry(name = "${spring.application.name}", fallbackMethod = "getDefaultCampaign")
     public PlayerProfileDto findPlayerByUuid(UUID id) throws ResourceNotFoundException {
+        LOGGER.info("inside findPlayerByUuid method");
+
         Optional<PlayerProfile> optionalPlayerProfile = playerProfileRepository.findById(id);
 
         if (optionalPlayerProfile.isPresent()) {
@@ -106,6 +111,8 @@ public class PlayerProfileServiceImpl implements PlayerProfileService {
     }
 
     public PlayerProfileDto getDefaultCampaign(UUID id, Exception exception) throws ResourceNotFoundException {
+        LOGGER.info("inside getDefaultCampaign method");
+
         Optional<PlayerProfile> optionalPlayerProfile = playerProfileRepository.findById(id);
 
         if (optionalPlayerProfile.isPresent()) {
